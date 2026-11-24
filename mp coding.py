@@ -1,4 +1,5 @@
 import csv
+import os
 file_csv=r"50_Startups.csv"
 Kolom_Wajib=["R&D Spend", "Administration", "Marketing Spend", "State", "Profit"]
 Kolom_Teks=["State"]
@@ -14,7 +15,7 @@ def buka_file(file_csv, kolom_wajib):
             return "Dataset kosong atau tidak memiliki header."
         kolom_hilang = [kolom for kolom in kolom_wajib if kolom not in reader.fieldnames]
         if len(kolom_hilang) > 0:
-                    return "Kolom yang hilang: " + str(kolom_hilang)
+            return "Kolom yang hilang: " + str(kolom_hilang)
     return ""
 def validasi_baris(row, kolom_teks, kolom_angka):
     for kolom in kolom_teks:
@@ -39,3 +40,14 @@ def klasifikasi_efisiensi(efisiensi):
         return "Sedang"
     else:
         return "Rendah"
+def urutkan_efisiensi(data):
+    data_urut = []
+    for row in data:
+        data_urut.append(row)
+    for i in range(len(data_urut)):
+        for j in range(len(data_urut) - 1 - i):
+            if data_urut[j]["efisiensi"] < data_urut[j + 1]["efisiensi"]:
+                sementara = data_urut[j]
+                data_urut[j] = data_urut[j + 1]
+                data_urut[j + 1] = sementara
+    return data_urut
