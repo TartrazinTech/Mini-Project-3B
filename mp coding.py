@@ -133,4 +133,15 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
             state_terendah = state
             rata_terendah = rata
     profit_tertinggi = data[0]
-    while 
+    for row in data:
+        if row["profit"] > profit_tertinggi["profit"]:
+            profit_tertinggi = row
+    print("\nKESEIMPULAN")
+    print("-"*110)
+    print(f"Efisiensi tertinggi : {data_urut[0]['id']} ({data_urut[0]['state']}) = {data_urut[0]['efisiensi']:.3f}")
+    print(f"Efisiensi terendah  : {data_urut[-1]['id']} ({data_urut[-1]['state']}) = {data_urut[-1]['efisiensi']:.3f}")
+    print(f"State rata-rata efisiensi tertinggi: {state_terbaik} ({rata_terbaik:.3f})")
+    print(f"State rata-rata efisiensi terendah : {state_terendah} ({rata_terendah:.3f})")
+    print(f"Profit terbesar     : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
+if len(data) == 0:
+    print("\nTidak ada data valid yang bisa dianalisis.")
