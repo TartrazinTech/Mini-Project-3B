@@ -79,7 +79,7 @@ def tampilkan_ranking(data_urut):
               f"| {row['profit']:>10,.2f} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
     print("=" * 116)
     print(f"Kriteria: Tinggi bila efisiensi >= {BATAS_TINGGI}, Sedang bila >= {BATAS_SEDANG}, selain itu Rendah")
-    def tampilkan_rekap_state(rekap_state):
+def tampilkan_rekap_state(rekap_state):
     print("\nREKAP RATA-RATA PER STATE")
     print("=" * 113)
     print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':>10} | {'Rata Admin':>10} | {'Rata Mkt':>10} "
@@ -94,7 +94,7 @@ def tampilkan_ranking(data_urut):
               f"| {r['efisiensi'] / n:>10.3f} | {tsr:>8} |")
     print("=" * 113)
     print("T/S/R = jumlah startup berkategori Tinggi / Sedang / Rendah")
-    def tampilkan_ringkasan(data, data_tidak_valid):
+def tampilkan_ringkasan(data, data_tidak_valid):
     jumlah_tinggi = jumlah_sedang = jumlah_rendah = 0
     total_pengeluaran_semua = 0
     total_profit_semua = 0
@@ -109,3 +109,28 @@ def tampilkan_ranking(data_urut):
         total_pengeluaran_semua += row["total"]
         total_profit_semua += row["profit"]
         total_efisiensi += row["efisiensi"]
+    print("\nRINGKASAN")
+    print("-" * 116)
+    print("Jumlah startup valid             :", len(data))
+    print("Jumlah data tidak valid          :", len(data_tidak_valid))
+    print("Kategori Tinggi                  :", jumlah_tinggi)
+    print("Kategori Sedang                  :", jumlah_sedang)
+    print("Kategori Rendah                  :", jumlah_rendah)
+    print(f"Total pengeluaran seluruh startup: {total_pengeluaran_semua:,.2f}$")
+    print(f"Total profit seluruh startup     : {total_profit_semua:,.2f}$")
+    print(f"Rata-rata efisiensi              : {total_efisiensi / len(data):.3f}")
+def tampilkan_kesimpulan(data, data_urut, rekap_state):
+    state_terbaik = ""
+    state_terendah = ""
+    rata_terbaik = 0
+    rata_terendah = 0
+    for state in rekap_state:
+        rata = rekap_state[state]["efisiensi"] / rekap_state[state]["jumlah"]
+        if state_terbaik == "" or rata > rata_terbaik:
+            state_terbaik = state
+            rata_terbaik = rata
+        if state_terendah == "" or rata < rata_terendah:
+            state_terendah = state
+            rata_terendah = rata
+    profit_tertinggi = data[0]
+    while 
