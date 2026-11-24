@@ -3,8 +3,9 @@ file_csv=r"50_Startups.csv"
 Kolom_Wajib=["R&D Spend", "Administration", "Marketing Spend", "State", "Profit"]
 Kolom_Teks=["State"]
 Kolom_Angka=["R&D Spend", "Administration", "Marketing Spend", "Profit"]
+BATAS_TINGGI = 0.30    
+BATAS_SEDANG = 0.26
 def buka_file(file_csv, kolom_wajib):
-    "Mengembalikan pesan error. Jika tidak ada masalah, mengembalikan teks kosong."
     if not os.path.exists(file_csv):
         return "File tidak ditemukan"
     with open (file_csv, "r") as file:
@@ -16,7 +17,6 @@ def buka_file(file_csv, kolom_wajib):
                     return "Kolom yang hilang: " + str(kolom_hilang)
     return ""
 def validasi_baris(row, kolom_teks, kolom_angka):
-    "Mengembalikan alasan jika baris tidak valid. Jika valid, mengembalikan teks kosong."
     for kolom in kolom_teks:
         if row[kolom] is None or row[kolom].strip() == "":
             return "kolom " + kolom + " kosong."
@@ -32,3 +32,10 @@ def validasi_baris(row, kolom_teks, kolom_angka):
     if total == 0:
             return "total pengeluaran nol, efisiensi tidak dapat dihitung."
     return ""
+def klasifikasi_efisiensi(efisiensi):
+    if efisiensi >= BATAS_TINGGI:
+        return "Tinggi"
+    elif efisiensi >= BATAS_SEDANG:
+        return "Sedang"
+    else:
+        return "Rendah"
