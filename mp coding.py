@@ -119,11 +119,41 @@ def tampilkan_ringkasan(data, data_tidak_valid):
     print(f"Total pengeluaran seluruh startup: {total_pengeluaran_semua:,.2f}$")
     print(f"Total profit seluruh startup     : {total_profit_semua:,.2f}$")
     print(f"Rata-rata efisiensi              : {total_efisiensi / len(data):.3f}")
+def tampilkan_tidak_valid(data_tidak_valid):
+    print("\nDATA TIDAK VALID (tidak ikut dihitung, perlu dicek ulang pada file CSV)")
+    print("=" * 90)
+    print(f"| {'Baris':<5} | {'ID':<3} | {'State':<10} | {'Alasan':<55} |")
+    print("=" * 90)
+    for item in data_tidak_valid:
+        print(f"| {item['nomor_baris']:<5} | {item['id']:<3} | {item['state']:<10} | {item['alasan']:<55} |")
+    print("=" * 90)
 data = []
 data_tidak_valid = []
-pesan_error = cek_file(FILE_CSV, KOLOM_WAJIB)
+pesan_error = buka_file(file_csv, Kolom_Wajib)
 if pesan_error != "":
     print("Error:", pesan_error)
+else:
+    with open(file_csv, "r") as file:
+        reader = csv.DictReader(file)
+        for nomor_baris, row in enumerate(reader, start=2):
+            id_startup = f"S{nomor_baris - 1:02d}"
+            state = row["State"]
+            if state is None or state.strip() == "":
+                state = "(kosong)"
+            else:
+                state = state.strip()
+            alasan = validasi_baris(row, Kolom_Teks, Kolom_Angka)
+            if alasan != "":
+                data_tidak_valid.append({"nomor_baris": nomor_baris, "id": id_startup, "state": state, "alasan": alasan})
+                continue
+            rnd = float(row["R&D Spend"])
+            admin = float(row["Administration"])
+            marketing = float(row["Marketing Spend"])
+            profit = float(row["Profit"])
+            total = rnd + admin + marketing
+            efisiensi = profit / total
+            kategori = klasifikasi_efisiensi(efisiensi)
+            data.append({"id": id_startup, "state": state, "rnd": rnd, "admin": admin, "marketing": marketing, "total": total, "profit": profit, "efisiensi": efisiensi, "kategori": kategori})
 def tampilkan_kesimpulan(data, data_urut, rekap_state):
     state_terbaik = ""
     state_terendah = ""
