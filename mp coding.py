@@ -202,7 +202,47 @@ def sapaan(nama, peran):
         return "Halo, Investor " + nama + "! Berikut peluang investasi yang bisa Anda tinjau."
     else:
         return "Halo, Manajer Keuangan " + nama + "! Berikut analisis pengeluaran dan profit."
-def jalankan_menu(nama, peran):
+def menu_ranking_keseluruhan(data, data_urut, rekap_state, data_tidak_valid):
+    tampilkan_ranking(data_urut)
+    tampilkan_ringkasan(data, data_tidak_valid)
+    tampilkan_kesimpulan(data, data_urut, rekap_state)
+    if len(data_tidak_valid) > 0:
+        tampilkan_tidak_valid(data_tidak_valid)
+def menu_top_bottom(data_urut):
+    print("\n1. Top (efisiensi tertinggi)")
+    print("2. Bottom (efisiensi terendah)")
+    jenis = ""
+    while jenis not in ["1", "2"]:
+        jenis = input("Pilih Top atau Bottom (1/2): ").strip()
+        if jenis not in ["1", "2"]:
+            print("Pilihan tidak valid.")
+    n = 0
+    while n == 0:
+        teks = input("Tampilkan berapa startup (1-" + str(len(data_urut)) + ")? ").strip()
+        if teks.isdigit() and 1 <= int(teks) <= len(data_urut):
+            n = int(teks)
+        else:
+            print("Masukkan angka antara 1 sampai " + str(len(data_urut)) + ".")
+    if jenis == "1":
+        tampilkan_ranking(data_urut[:n], "TOP " + str(n) + " EFISIENSI STARTUP")
+    else:
+        tampilkan_ranking(data_urut[-n:], "BOTTOM " + str(n) + " EFISIENSI STARTUP")
+def menu_rekap_state(rekap_state):
+    daftar_state = list(rekap_state.keys())
+    print("\nPilih state:")
+    for i in range(len(daftar_state)):
+        print(str(i + 1) + ". " + daftar_state[i])
+    pilihan = 0
+    while pilihan == 0:
+        teks = input("Pilihan (1-" + str(len(daftar_state)) + "): ").strip()
+        if teks.isdigit() and 1 <= int(teks) <= len(daftar_state):
+            pilihan = int(teks)
+        else:
+            print("Pilihan tidak valid.")
+    state_dipilih = daftar_state[pilihan - 1]
+    tampilkan_rekap_state({state_dipilih: rekap_state[state_dipilih]})
+
+def jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid):
     print("\n" + sapaan(nama, peran))
     while True:
         print("\n========== MENU ==========")
@@ -212,7 +252,7 @@ def jalankan_menu(nama, peran):
         print("4. Keluar (kembali ke identifikasi user)")
         pilihan = input("Pilihan (1-4): ").strip()
         if pilihan == "1":
-            menu_ranking_keseluruhan()
+            menu_ranking_keseluruhan(data, data_urut, rekap_state, data_tidak_valid)
         elif pilihan == "2":
             menu_top_bottom(data_urut)
         elif pilihan == "3":
@@ -236,4 +276,4 @@ else:
         if nama is None:
             print("Program selesai.")
             break
-        jalankan_menu(nama, peran)
+        jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid)
