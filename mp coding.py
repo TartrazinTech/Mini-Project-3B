@@ -171,16 +171,69 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
     print(f"State rata-rata efisiensi tertinggi: {state_terbaik} ({rata_terbaik:.3f})")
     print(f"State rata-rata efisiensi terendah : {state_terendah} ({rata_terendah:.3f})")
     print(f"Profit terbesar                    : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
+def identifikasi_user():
+    print("\n" + "=" * 50)
+    print("SELAMAT DATANG - ANALISIS EFISIENSI STARTUP")
+    print("=" * 50)
+    nama = ""
+    while nama == "":
+        nama = input("Masukkan nama Anda: ").strip()
+    print("Pilih peran Anda:")
+    print("1. Pemilik Startup")
+    print("2. Investor")
+    print("3. Manajer Keuangan")
+    print("0. Tutup program")
+    while True:
+        pilihan = input("Pilihan (0-3): ").strip()
+        if pilihan == "0":
+            return None, None
+        if pilihan == "1":
+            return nama, "Pemilik Startup"
+        if pilihan == "2":
+            return nama, "Investor"
+        if pilihan == "3":
+            return nama, "Manajer Keuangan"
+        print("Pilihan tidak valid, coba lagi.")
+
+def sapaan(nama, peran):
+    if peran == "Pemilik Startup":
+        return "Halo, Founder " + nama + "! Mari lihat performa startup Anda."
+    elif peran == "Investor":
+        return "Halo, Investor " + nama + "! Berikut peluang investasi yang bisa Anda tinjau."
+    else:
+        return "Halo, Manajer Keuangan " + nama + "! Berikut analisis pengeluaran dan profit."
+def jalankan_menu(nama, peran):
+    print("\n" + sapaan(nama, peran))
+    while True:
+        print("\n========== MENU ==========")
+        print("1. Tampilkan ranking keseluruhan")
+        print("2. Top n / Bottom n")
+        print("3. Rekap per state")
+        print("4. Keluar (kembali ke identifikasi user)")
+        pilihan = input("Pilihan (1-4): ").strip()
+        if pilihan == "1":
+            menu_ranking_keseluruhan()
+        elif pilihan == "2":
+            menu_top_bottom(data_urut)
+        elif pilihan == "3":
+            menu_rekap_state(rekap_state)
+        elif pilihan == "4":
+            print("Sampai jumpa, " + nama + "!")
+            break
+        else:
+            print("Pilihan tidak valid, coba lagi.")
 if len(data) == 0:
     print("\nTidak ada data valid yang bisa dianalisis.")
+    if len(data_tidak_valid) > 0:
+        tampilkan_tidak_valid(data_tidak_valid)
 else:
     data_urut = urutkan_efisiensi(data)
     for urutan, row in enumerate(data_urut, start=1):
         row["peringkat"] = urutan
     rekap_state = hitung_rekap_state(data)
-    tampilkan_ranking(data_urut)
-    tampilkan_rekap_state(rekap_state)
-    tampilkan_ringkasan(data, data_tidak_valid)
-    tampilkan_kesimpulan(data, data_urut, rekap_state)
-if len(data_tidak_valid) > 0:
-    tampilkan_tidak_valid(data_tidak_valid)
+    while True:
+        nama, peran = identifikasi_user()
+        if nama is None:
+            print("Program selesai.")
+            break
+        jalankan_menu(nama, peran)
