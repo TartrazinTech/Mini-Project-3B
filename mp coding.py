@@ -119,6 +119,11 @@ def tampilkan_ringkasan(data, data_tidak_valid):
     print(f"Total pengeluaran seluruh startup: {total_pengeluaran_semua:,.2f}$")
     print(f"Total profit seluruh startup     : {total_profit_semua:,.2f}$")
     print(f"Rata-rata efisiensi              : {total_efisiensi / len(data):.3f}")
+data = []
+data_tidak_valid = []
+pesan_error = cek_file(FILE_CSV, KOLOM_WAJIB)
+if pesan_error != "":
+    print("Error:", pesan_error)
 def tampilkan_kesimpulan(data, data_urut, rekap_state):
     state_terbaik = ""
     state_terendah = ""
@@ -145,3 +150,14 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
     print(f"Profit terbesar     : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
 if len(data) == 0:
     print("\nTidak ada data valid yang bisa dianalisis.")
+else:
+    data_urut = urutkan_efisiensi(data)
+    for urutan, row in enumerate(data_urut, start=1):
+        row["peringkat"] = urutan
+    rekap_state = hitung_rekap_state(data)
+    tampilkan_ranking(data_urut)
+    tampilkan_rekap_state(rekap_state)
+    tampilkan_ringkasan(data, data_tidak_valid)
+    tampilkan_kesimpulan(data, data_urut, rekap_state)
+if len(data_tidak_valid) > 0:
+    tampilkan_tidak_valid(data_tidak_valid)
