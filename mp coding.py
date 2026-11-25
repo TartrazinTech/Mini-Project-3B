@@ -70,28 +70,23 @@ def hitung_rekap_state(data):
 def tampilkan_ranking(data_urut):
     print("\nRANKING EFISIENSI STARTUP (Efisiensi = Profit / Total Pengeluaran)")
     print("=" * 116)
-    print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':>10} | {'Admin':>10} | {'Marketing':>10} "
-          f"| {'Total Keluar':>12} | {'Profit':>10} | {'Efisiensi':>9} | {'Kategori':<8} |")
+    print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':<10} | {'Admin':<10} | {'Marketing':<10} | {'Total Keluar':<12} | {'Profit':<10} | {'Efisiensi':<9} | {'Kategori':<8} |")
     print("=" * 116)
     for row in data_urut:
-        print(f"| {row['peringkat']:>3} | {row['id']:<3} | {row['state']:<10} | {row['rnd']:>10,.2f} "
-              f"| {row['admin']:>10,.2f} | {row['marketing']:>10,.2f} | {row['total']:>12,.2f} "
-              f"| {row['profit']:>10,.2f} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
+        print(f"| {row['peringkat']:>3} | {row['id']:<3} | {row['state']:<10} | {row['rnd']:>10,.2f} | {row['admin']:>10,.2f} | {row['marketing']:>10,.2f} | {row['total']:>12,.2f} | {row['profit']:>10,.2f} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
     print("=" * 116)
     print(f"Kriteria: Tinggi bila efisiensi >= {BATAS_TINGGI}, Sedang bila >= {BATAS_SEDANG}, selain itu Rendah")
 def tampilkan_rekap_state(rekap_state):
     print("\nREKAP RATA-RATA PER STATE")
     print("=" * 113)
-    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':>10} | {'Rata Admin':>10} | {'Rata Mkt':>10} "
-          f"| {'Rata Total':>10} | {'Rata Profit':>11} | {'Rata Efis.':>10} | {'T/S/R':>8} |")
+    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':<10} | {'Rata Admin':<10} | {'Rata Mkt':<10} "
+          f"| {'Rata Total':<10} | {'Rata Profit':<11} | {'Rata Efis.':<10} | {'T/S/R':>8} |")
     print("=" * 113)
     for state in rekap_state:
         r = rekap_state[state]
         n = r["jumlah"]
         tsr = f"{r['Tinggi']}/{r['Sedang']}/{r['Rendah']}"
-        print(f"| {state:<10} | {n:>6} | {r['rnd'] / n:>10,.2f} | {r['admin'] / n:>10,.2f} "
-              f"| {r['marketing'] / n:>10,.2f} | {r['total'] / n:>10,.2f} | {r['profit'] / n:>11,.2f} "
-              f"| {r['efisiensi'] / n:>10.3f} | {tsr:>8} |")
+        print(f"| {state:<10} | {n:>6} | {r['rnd'] / n:>10,.2f} | {r['admin'] / n:>10,.2f} | {r['marketing'] / n:>10,.2f} | {r['total'] / n:>10,.2f} | {r['profit'] / n:>11,.2f} | {r['efisiensi'] / n:>10.3f} | {tsr:>8} |")
     print("=" * 113)
     print("T/S/R = jumlah startup berkategori Tinggi / Sedang / Rendah")
 def tampilkan_ringkasan(data, data_tidak_valid):
@@ -171,13 +166,13 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
     for row in data:
         if row["profit"] > profit_tertinggi["profit"]:
             profit_tertinggi = row
-    print("\nKESEIMPULAN")
+    print("\nKESIMPULAN")
     print("-"*110)
-    print(f"Efisiensi tertinggi : {data_urut[0]['id']} ({data_urut[0]['state']}) = {data_urut[0]['efisiensi']:.3f}")
-    print(f"Efisiensi terendah  : {data_urut[-1]['id']} ({data_urut[-1]['state']}) = {data_urut[-1]['efisiensi']:.3f}")
+    print(f"Efisiensi tertinggi                : {data_urut[0]['id']} ({data_urut[0]['state']}) = {data_urut[0]['efisiensi']:.3f}")
+    print(f"Efisiensi terendah                 : {data_urut[-1]['id']} ({data_urut[-1]['state']}) = {data_urut[-1]['efisiensi']:.3f}")
     print(f"State rata-rata efisiensi tertinggi: {state_terbaik} ({rata_terbaik:.3f})")
     print(f"State rata-rata efisiensi terendah : {state_terendah} ({rata_terendah:.3f})")
-    print(f"Profit terbesar     : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
+    print(f"Profit terbesar                    : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
 if len(data) == 0:
     print("\nTidak ada data valid yang bisa dianalisis.")
 else:
