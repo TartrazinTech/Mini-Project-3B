@@ -78,8 +78,7 @@ def tampilkan_ranking(data_urut):
 def tampilkan_rekap_state(rekap_state):
     print("\nREKAP RATA-RATA PER STATE")
     print("=" * 113)
-    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':<10} | {'Rata Admin':<10} | {'Rata Mkt':<10} "
-          f"| {'Rata Total':<10} | {'Rata Profit':<11} | {'Rata Efis.':<10} | {'T/S/R':>8} |")
+    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':<10} | {'Rata Admin':<10} | {'Rata Mkt':<10} | {'Rata Total':<10} | {'Rata Profit':<11} | {'Rata Efis.':<10} | {'T/S/R':>8} |")
     print("=" * 113)
     for state in rekap_state:
         r = rekap_state[state]
