@@ -66,8 +66,8 @@ def hitung_rekap_state(data):
         r["efisiensi"] += row["efisiensi"]
         r[row["kategori"]] += 1
     return rekap
-def tampilkan_ranking(data_urut):
-    print("\nRANKING EFISIENSI STARTUP (Efisiensi = Profit / Total Pengeluaran)")
+def tampilkan_ranking(data_urut, judul="RANKING EFISIENSI STARTUP"):
+    print("\n" + judul + " (Efisiensi = Profit / Total Pengeluaran)")
     print("=" * 116)
     print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':<10} | {'Admin':<10} | {'Marketing':<10} | {'Total Keluar':<12} | {'Profit':<10} | {'Efisiensi':<9} | {'Kategori':<8} |")
     print("=" * 116)
