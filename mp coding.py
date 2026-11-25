@@ -55,8 +55,7 @@ def hitung_rekap_state(data):
     rekap = {}
     for row in data:
         if row["state"] not in rekap:
-            rekap[row["state"]] = {"jumlah": 0, "rnd": 0, "admin": 0, "marketing": 0, "total": 0,
-                                   "profit": 0, "efisiensi": 0, "Tinggi": 0, "Sedang": 0, "Rendah": 0}
+            rekap[row["state"]] = {"jumlah": 0, "rnd": 0, "admin": 0, "marketing": 0, "total": 0, "profit": 0, "efisiensi": 0, "Tinggi": 0, "Sedang": 0, "Rendah": 0}
         r = rekap[row["state"]]
         r["jumlah"] += 1
         r["rnd"] += row["rnd"]
@@ -167,7 +166,7 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
         if row["profit"] > profit_tertinggi["profit"]:
             profit_tertinggi = row
     print("\nKESIMPULAN")
-    print("-"*110)
+    print("-"*120)
     print(f"Efisiensi tertinggi                : {data_urut[0]['id']} ({data_urut[0]['state']}) = {data_urut[0]['efisiensi']:.3f}")
     print(f"Efisiensi terendah                 : {data_urut[-1]['id']} ({data_urut[-1]['state']}) = {data_urut[-1]['efisiensi']:.3f}")
     print(f"State rata-rata efisiensi tertinggi: {state_terbaik} ({rata_terbaik:.3f})")
