@@ -194,7 +194,6 @@ def identifikasi_user():
         if pilihan == "3":
             return nama, "Manajer Keuangan"
         print("Pilihan tidak valid, coba lagi.")
-
 def sapaan(nama, peran):
     if peran == "Pemilik Startup":
         return "Halo, Founder " + nama + "! Mari lihat performa startup Anda."
