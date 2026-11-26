@@ -69,7 +69,7 @@ def hitung_rekap_state(data):
         r["efisiensi"] += row["efisiensi"]
         r[row["kategori"]] += 1
     return rekap
-def tampilkan_ranking(data_urut, judul="RANKING EFISIENSI STARTUP"):
+def tampilkan_ranking(data_urut, judul="Rangking Efisiensi Startup"):
     print("\n" + judul + " (Efisiensi = Profit / Total Pengeluaran)")
     print("=" * 116)
     print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':<10} | {'Admin':<10} | {'Marketing':<10} | {'Total Keluar':<12} | {'Profit':<10} | {'Efisiensi':<9} | {'Kategori':<8} |")
@@ -105,7 +105,7 @@ def tampilkan_ringkasan(data, data_tidak_valid):
         total_pengeluaran_semua += row["total"]
         total_profit_semua += row["profit"]
         total_efisiensi += row["efisiensi"]
-    print("\nRINGKASAN")
+    print("\nRingkasan")
     print("-" * 116)
     print("Jumlah startup valid             :", len(data))
     print("Jumlah data tidak valid          :", len(data_tidak_valid))
@@ -116,7 +116,7 @@ def tampilkan_ringkasan(data, data_tidak_valid):
     print(f"Total profit seluruh startup     : {total_profit_semua:,.2f}$")
     print(f"Rata-rata efisiensi              : {total_efisiensi / len(data):.3f}")
 def tampilkan_tidak_valid(data_tidak_valid):
-    print("\nDATA TIDAK VALID (tidak ikut dihitung, perlu dicek ulang pada file CSV)")
+    print("\nData Tidak Valid (tidak ikut dihitung, perlu dicek ulang pada file CSV)")
     print("=" * 90)
     print(f"| {'Baris':<5} | {'ID':<3} | {'State':<10} | {'Alasan':<55} |")
     print("=" * 90)
@@ -229,6 +229,11 @@ def menu_top_bottom(data_urut):
         tampilkan_ranking(data_urut[:n], "TOP " + str(n) + " EFISIENSI STARTUP")
     else:
         tampilkan_ranking(data_urut[-n:], "BOTTOM " + str(n) + " EFISIENSI STARTUP")
+def hitung_komposisi(row):
+    p_rnd = row["rnd"] / row["total"] * 100
+    p_admin = row["admin"] / row["total"] * 100
+    p_marketing = row["marketing"] / row["total"] * 100
+    return p_rnd, p_admin, p_marketing
 def buat_saran(row, acuan, rata_total, rata_profit):
     saran = []
     total = row["total"]
@@ -236,6 +241,20 @@ def buat_saran(row, acuan, rata_total, rata_profit):
     persen_turun = (total - profit / batas_sedang) / total * 100
     pengeluaran_besar = total > rata_total
     profit_kecil = profit < rata_profit
+    if pengeluaran_besar and profit_kecil:
+        saran.append(f"Prioritas gabungan: pengeluaran (${total:,.0f}) di atas rata-rata ${rata_total:,.0f}\n dan profit (${profit:,.0f}) di bawah rata-rata ${rata_profit:,.0f}.\n Turunkan pengeluaran sekaligus tingkatkan profit.")
+    elif pengeluaran_besar:
+        saran.append(f"Prioritas turunkan pengeluaran: profit sudah di atas rata-rata (${rata_profit:,.0f}),\n tetapi pengeluaran terlalu besar (rata-rata ${rata_total:,.0f}) untuk hasil yang didapat.")
+    elif profit_kecil:
+        saran.append(f"Prioritas naikkan profit: pengeluaran sudah tidak besar (di bawah rata-rata ${rata_total:,.0f}),\n sehingga menaikkan profit lebih berpengaruh daripada memangkas biaya.\n Tinjau harga jual dan margin, lalu fokus pada produk/pelanggan paling menguntungkan.")
+    else:
+        saran.append("Pengeluaran dan profit sudah dekat rata-rata; lakukan penyesuaian kecil pada keduanya.")
+    if persen_turun <= selisih_kecil:
+        saran.append(f"Selisih ke batas Sedang kecil (cukup turun {persen_turun:.1f}%): penghematan ringan sudah cukup.")
+    elif persen_turun > selisih_besar:
+        saran.append(f"Selisih ke batas Sedang besar (perlu turun {persen_turun:.1f}%): memangkas biaya saja sulit,\n gabungkan dengan peningkatan profit dan tinjau ulang model bisnis.")
+    else:
+        saran.append(f"Selisih ke batas Sedang sedang ({persen_turun:.1f}%): rencanakan penghematan bertahap tiap periode.")
 def tampilkan_saran(data, data_urut):
     rendah = []
     for i in range(len(data_urut) - 1, -1, -1):
@@ -283,7 +302,6 @@ def menu_rekap_state(rekap_state):
             print("Pilihan tidak valid.")
     state_dipilih = daftar_state[pilihan - 1]
     tampilkan_rekap_state({state_dipilih: rekap_state[state_dipilih]})
-
 def jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid):
     print("\n" + sapaan(nama, peran))
     while True:
