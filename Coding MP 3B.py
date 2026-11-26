@@ -255,12 +255,28 @@ def buat_saran(row, acuan, rata_total, rata_profit):
         saran.append(f"Selisih ke batas Sedang besar (perlu turun {persen_turun:.1f}%): memangkas biaya saja sulit,\n gabungkan dengan peningkatan profit dan tinjau ulang model bisnis.")
     else:
         saran.append(f"Selisih ke batas Sedang sedang ({persen_turun:.1f}%): rencanakan penghematan bertahap tiap periode.")
+    p_rnd, p_admin, p_marketing = hitung_komposisi(row)
+    pos = [("R&D", p_rnd, acuan[0], row["rnd"], "prioritaskan proyek R&D yang paling dekat menghasilkan pendapatan."),
+           ("Administration", p_admin, acuan[1], row["admin"], "kaji biaya administrasi (sewa, langganan, gaji non-produksi) dan otomatiskan proses rutin."),
+           ("Marketing", p_marketing, acuan[2], row["marketing"], "evaluasi biaya per pelanggan baru di tiap kanal, hentikan kanal yang hasilnya kecil.")]
+    ada_berlebih = False
+    for nama, porsi, batas, nilai, tips in pos:
+        if porsi > batas + selisih_porsi:
+            kelebihan = nilai - batas / 100 * total
+            saran.append(f"Porsi {nama} {porsi:.1f}% jauh di atas acuan {batas:.1f}% (kelebihan sekitar ${kelebihan:,.0f}).\n"
+                         f"         Saran: {tips}")
+            ada_berlebih = True
+    if not ada_berlebih:
+        saran.append("Komposisi pengeluaran sudah mendekati acuan; turunkan biaya secara merata di semua pos.")
+    if row["rnd"] == 0:
+        saran.append("Belum ada pengeluaran R&D. Pertimbangkan alokasi kecil dengan memindahkan sebagian dana\n dari pos yang berlebih, tanpa menambah total pengeluaran.")
+    return saran
 def tampilkan_saran(data, data_urut):
     rendah = []
     for i in range(len(data_urut) - 1, -1, -1):
         if data_urut[i]["kategori"] == "Rendah":
             rendah.append(data_urut[i])
-    print("\nSARAN SOLUSI UNTUK STARTUP EFISIENSI RENDAH")
+    print("\nSaran & Solusi Untuk Startup Yang Efisiensi Rendah")
     print("=" * 116)
     if len(rendah) == 0:
         print("Tidak ada startup berkategori Rendah, jadi tidak ada saran yang perlu ditampilkan.")
@@ -288,7 +304,30 @@ def tampilkan_saran(data, data_urut):
         rata_profit += row["profit"]
     rata_total = rata_total / len(data)
     rata_profit = rata_profit / len(data)
-def menu_rekap_state(rekap_state):
+    print(f"Jumlah startup efisiensi Rendah : {len(rendah)} dari {len(data)} (diurutkan dari efisiensi terendah)")
+    print(f"Target perbaikan                : naik ke kategori Sedang (efisiensi >= {batas_sedang})")
+    print(f"Acuan komposisi ({label_acuan}): R&D {acuan[0]:.1f}% | Admin {acuan[1]:.1f}% | Marketing {acuan[2]:.1f}%")
+    print(f"Rata-rata seluruh startup       : pengeluaran ${rata_total:,.2f} | profit ${rata_profit:,.2f}")
+    print("Catatan: saran bersifat acuan berdasarkan pola data ini, bukan keputusan mutlak.")
+    for nomor, row in enumerate(rendah, start=1):
+        p_rnd, p_admin, p_marketing = hitung_komposisi(row)
+        turun = row["total"] - row["profit"] / batas_sedang
+        naik = batas_sedang * row["total"] - row["profit"]
+        print("\n" + "-" * 116)
+        print(f"[{nomor}] {row['id']} | {row['state']} | peringkat {row['peringkat']} dari {len(data)} | efisiensi {row['efisiensi']:.4f}")
+        print(f"    Pengeluaran ${row['total']:,.2f} | Profit ${row['profit']:,.2f}")
+        print(f"    Komposisi: R&D {p_rnd:.1f}% | Admin {p_admin:.1f}% | Marketing {p_marketing:.1f}%")
+        print("    Untuk naik ke Sedang, pilih salah satu:")
+        print(f"      a. Turunkan pengeluaran ${turun:,.2f} ({turun / row['total'] * 100:.1f}%) menjadi ${row['total'] - turun:,.2f}")
+        if row["profit"] > 0:
+            print(f"      b. Naikkan profit ${naik:,.2f} ({naik / row['profit'] * 100:.1f}%) menjadi ${row['profit'] + naik:,.2f}")
+        else:
+            print(f"      b. Naikkan profit ${naik:,.2f} (profit saat ini nol)")
+        print("    Saran:")
+        daftar_saran = buat_saran(row, acuan, rata_total, rata_profit)
+        for urutan, teks in enumerate(daftar_saran, start=1):
+            print(f"      {urutan}. {teks}")
+def menu_rekap_state(rekap_state, data_urut):
     daftar_state = list(rekap_state.keys())
     print("\nPilih state:")
     for i in range(len(daftar_state)):
@@ -302,6 +341,12 @@ def menu_rekap_state(rekap_state):
             print("Pilihan tidak valid.")
     state_dipilih = daftar_state[pilihan - 1]
     tampilkan_rekap_state({state_dipilih: rekap_state[state_dipilih]})
+    data_state = []
+    for row in data_urut:
+        if row["state"] == state_dipilih:
+            data_state.append(row)
+    tampilkan_ranking(data_state, "DETAIL STARTUP DI " + state_dipilih.upper())
+    print("No = peringkat efisiensi keseluruhan (dari " + str(len(data_urut)) + " startup)")
 def jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid):
     print("\n" + sapaan(nama, peran))
     while True:
@@ -320,7 +365,7 @@ def jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid):
             menu_rekap_state(rekap_state, data_urut)
         elif pilihan == "4":
             tampilkan_saran(data, data_urut)
-        elif pilihan == "5": 
+        elif pilihan == "5":
             print("Sampai jumpa, " + nama + "!")
             break
         else:
