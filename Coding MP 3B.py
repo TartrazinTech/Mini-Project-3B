@@ -4,8 +4,11 @@ file_csv=r"50_Startups.csv"
 Kolom_Wajib=["R&D Spend", "Administration", "Marketing Spend", "State", "Profit"]
 Kolom_Teks=["State"]
 Kolom_Angka=["R&D Spend", "Administration", "Marketing Spend", "Profit"]
-BATAS_TINGGI = 0.30    
-BATAS_SEDANG = 0.26
+batas_tinggi = 0.30    
+batas_sedang = 0.26
+selisih_kecil = 10     
+selisih_besar = 40     
+selisih_porsi = 10
 def buka_file(file_csv, kolom_wajib):
     if not os.path.exists(file_csv):
         return "File tidak ditemukan"
@@ -34,9 +37,9 @@ def validasi_baris(row, kolom_teks, kolom_angka):
             return "total pengeluaran nol, efisiensi tidak dapat dihitung."
     return ""
 def klasifikasi_efisiensi(efisiensi):
-    if efisiensi >= BATAS_TINGGI:
+    if efisiensi >= batas_tinggi:
         return "Tinggi"
-    elif efisiensi >= BATAS_SEDANG:
+    elif efisiensi >= batas_sedang:
         return "Sedang"
     else:
         return "Rendah"
@@ -74,7 +77,7 @@ def tampilkan_ranking(data_urut, judul="RANKING EFISIENSI STARTUP"):
     for row in data_urut:
         print(f"| {row['peringkat']:>3} | {row['id']:<3} | {row['state']:<10} | {row['rnd']:>10,.2f} | {row['admin']:>10,.2f} | {row['marketing']:>10,.2f} | {row['total']:>12,.2f} | {row['profit']:>10,.2f} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
     print("=" * 116)
-    print(f"Kriteria: Tinggi bila efisiensi >= {BATAS_TINGGI}, Sedang bila >= {BATAS_SEDANG}, selain itu Rendah")
+    print(f"Kriteria: Tinggi bila efisiensi >= {batas_tinggi}, Sedang bila >= {batas_sedang}, selain itu Rendah")
 def tampilkan_rekap_state(rekap_state):
     print("\nREKAP RATA-RATA PER STATE")
     print("=" * 113)
@@ -226,6 +229,46 @@ def menu_top_bottom(data_urut):
         tampilkan_ranking(data_urut[:n], "TOP " + str(n) + " EFISIENSI STARTUP")
     else:
         tampilkan_ranking(data_urut[-n:], "BOTTOM " + str(n) + " EFISIENSI STARTUP")
+def buat_saran(row, acuan, rata_total, rata_profit):
+    saran = []
+    total = row["total"]
+    profit = row["profit"]
+    persen_turun = (total - profit / batas_sedang) / total * 100
+    pengeluaran_besar = total > rata_total
+    profit_kecil = profit < rata_profit
+def tampilkan_saran(data, data_urut):
+    rendah = []
+    for i in range(len(data_urut) - 1, -1, -1):
+        if data_urut[i]["kategori"] == "Rendah":
+            rendah.append(data_urut[i])
+    print("\nSARAN SOLUSI UNTUK STARTUP EFISIENSI RENDAH")
+    print("=" * 116)
+    if len(rendah) == 0:
+        print("Tidak ada startup berkategori Rendah, jadi tidak ada saran yang perlu ditampilkan.")
+        return
+    acuan_data = []
+    for row in data:
+        if row["kategori"] == "Tinggi":
+            acuan_data.append(row)
+    label_acuan = "startup kategori Tinggi"
+    if len(acuan_data) == 0:
+        acuan_data = data
+        label_acuan = "seluruh startup"
+    b_rnd = b_admin = b_marketing = 0
+    for row in acuan_data:
+        p_rnd, p_admin, p_marketing = hitung_komposisi(row)
+        b_rnd += p_rnd
+        b_admin += p_admin
+        b_marketing += p_marketing
+    acuan = (b_rnd / len(acuan_data), b_admin / len(acuan_data), b_marketing / len(acuan_data))
+
+    rata_total = 0
+    rata_profit = 0
+    for row in data:
+        rata_total += row["total"]
+        rata_profit += row["profit"]
+    rata_total = rata_total / len(data)
+    rata_profit = rata_profit / len(data)
 def menu_rekap_state(rekap_state):
     daftar_state = list(rekap_state.keys())
     print("\nPilih state:")
@@ -248,15 +291,18 @@ def jalankan_menu(nama, peran, data, data_urut, rekap_state, data_tidak_valid):
         print("1. Tampilkan ranking keseluruhan")
         print("2. Top n / Bottom n")
         print("3. Rekap per state")
-        print("4. Keluar (kembali ke identifikasi user)")
-        pilihan = input("Pilihan (1-4): ").strip()
+        print("4. Saran solusi (startup efisiensi rendah)")
+        print("5. Keluar (kembali ke identifikasi user)")
+        pilihan = input("Pilihan (1-5): ").strip()
         if pilihan == "1":
             menu_ranking_keseluruhan(data, data_urut, rekap_state, data_tidak_valid)
         elif pilihan == "2":
             menu_top_bottom(data_urut)
         elif pilihan == "3":
-            menu_rekap_state(rekap_state)
+            menu_rekap_state(rekap_state, data_urut)
         elif pilihan == "4":
+            tampilkan_saran(data, data_urut)
+        elif pilihan == "5": 
             print("Sampai jumpa, " + nama + "!")
             break
         else:
