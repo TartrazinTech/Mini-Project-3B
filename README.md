@@ -130,6 +130,3 @@ Program menghasilkan beberapa keluaran utama:
 5. Klasifikasi efisiensi menggunakan batas kategori yang telah ditentukan.
 6. Program tidak digunakan untuk memprediksi profit masa depan.
 7. Saran perbaikan yang diberikan merupakan hasil analisis data dan bukan keputusan bisnis yang mutlak.
-UNIVERSITAS ANDALAS
-
-2026
