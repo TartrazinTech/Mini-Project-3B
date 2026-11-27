@@ -1,6 +1,6 @@
 import csv
 import os
-file_csv=r"50_Startups.csv"
+file_csv=r"C:\Tartrazin\test_case.csv"
 Kolom_Wajib=["R&D Spend", "Administration", "Marketing Spend", "State", "Profit"]
 Kolom_Teks=["State"]
 Kolom_Angka=["R&D Spend", "Administration", "Marketing Spend", "Profit"]
@@ -98,24 +98,34 @@ def hitung_rekap_state(data):
     return rekap
 def tampilkan_ranking(data_urut, judul="Rangking Efisiensi Startup"):
     print("\n" + judul + " (Efisiensi = Profit / Total Pengeluaran)")
-    print("=" * 116)
-    print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':<10} | {'Admin':<10} | {'Marketing':<10} | {'Total Keluar':<12} | {'Profit':<10} | {'Efisiensi':<9} | {'Kategori':<8} |")
-    print("=" * 116)
+    print("=" * 120)
+    print(f"| {'No':>3} | {'ID':<3} | {'State':<10} | {'R&D':<11} | {'Admin':<11} | {'Marketing':<11} | {'Total Keluar':<12} | {'Profit':<11} | {'Efisiensi':<9} | {'Kategori':<8} |")
+    print("=" * 120)
     for row in data_urut:
-        print(f"| {row['peringkat']:>3} | {row['id']:<3} | {row['state']:<10} | {row['rnd']:>10,.2f} | {row['admin']:>10,.2f} | {row['marketing']:>10,.2f} | {row['total']:>12,.2f} | {row['profit']:>10,.2f} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
-    print("=" * 116)
+        rnd = f"${row['rnd']:,.2f}"
+        admin = f"${row['admin']:,.2f}"
+        marketing = f"${row['marketing']:,.2f}"
+        total = f"${row['total']:,.2f}"
+        profit = f"${row['profit']:,.2f}"
+        print(f"| {row['peringkat']:>3} | {row['id']:<3} | {row['state']:<10} | {rnd:>11} | {admin:>11} | {marketing:>11} | {total:>12} | {profit:>11} | {row['efisiensi']:>9.3f} | {row['kategori']:<8} |")
+    print("=" * 120)
     print(f"Kriteria: Tinggi bila efisiensi >= {batas_tinggi}, Sedang bila >= {batas_sedang}, selain itu Rendah")
 def tampilkan_rekap_state(rekap_state):
     print("\nREKAP RATA-RATA PER STATE")
-    print("=" * 113)
-    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':<10} | {'Rata Admin':<10} | {'Rata Mkt':<10} | {'Rata Total':<10} | {'Rata Profit':<11} | {'Rata Efis.':<10} | {'T/S/R':>8} |")
-    print("=" * 113)
+    print("=" * 118)
+    print(f"| {'State':<10} | {'Jumlah':>6} | {'Rata R&D':<11} | {'Rata Admin':<11} | {'Rata Mkt':<11} | {'Rata Total':<11} | {'Rata Profit':<12} | {'Rata Efis.':<10} | {'T/S/R':>8} |")
+    print("=" * 118)
     for state in rekap_state:
         r = rekap_state[state]
         n = r["jumlah"]
         tsr = f"{r['Tinggi']}/{r['Sedang']}/{r['Rendah']}"
-        print(f"| {state:<10} | {n:>6} | {r['rnd'] / n:>10,.2f} | {r['admin'] / n:>10,.2f} | {r['marketing'] / n:>10,.2f} | {r['total'] / n:>10,.2f} | {r['profit'] / n:>11,.2f} | {r['efisiensi'] / n:>10.3f} | {tsr:>8} |")
-    print("=" * 113)
+        rata_rnd = f"${r['rnd'] / n:,.2f}"
+        rata_admin = f"${r['admin'] / n:,.2f}"
+        rata_marketing = f"${r['marketing'] / n:,.2f}"
+        rata_total = f"${r['total'] / n:,.2f}"
+        rata_profit = f"${r['profit'] / n:,.2f}"
+        print(f"| {state:<10} | {n:>6} | {rata_rnd:>11} | {rata_admin:>11} | {rata_marketing:>11} | {rata_total:>11} | {rata_profit:>12} | {r['efisiensi'] / n:>10.3f} | {tsr:>8} |")
+    print("=" * 118)
     print("T/S/R = jumlah startup berkategori Tinggi / Sedang / Rendah")
 def tampilkan_ringkasan(data, data_tidak_valid):
     jumlah_tinggi = jumlah_sedang = jumlah_rendah = 0
@@ -139,8 +149,8 @@ def tampilkan_ringkasan(data, data_tidak_valid):
     print("Kategori Tinggi                  :", jumlah_tinggi)
     print("Kategori Sedang                  :", jumlah_sedang)
     print("Kategori Rendah                  :", jumlah_rendah)
-    print(f"Total pengeluaran seluruh startup: {total_pengeluaran_semua:,.2f}$")
-    print(f"Total profit seluruh startup     : {total_profit_semua:,.2f}$")
+    print(f"Total pengeluaran seluruh startup: ${total_pengeluaran_semua:,.2f}")
+    print(f"Total profit seluruh startup     : ${total_profit_semua:,.2f}")
     print(f"Rata-rata efisiensi              : {total_efisiensi / len(data):.3f}")
 def tampilkan_tidak_valid(data_tidak_valid):
     print("\nData Tidak Valid (tidak ikut dihitung, perlu dicek ulang pada file CSV)")
@@ -200,7 +210,7 @@ def tampilkan_kesimpulan(data, data_urut, rekap_state):
     print(f"Efisiensi terendah                 : {data_urut[-1]['id']} ({data_urut[-1]['state']}) = {data_urut[-1]['efisiensi']:.3f}")
     print(f"State rata-rata efisiensi tertinggi: {state_terbaik} ({rata_terbaik:.3f})")
     print(f"State rata-rata efisiensi terendah : {state_terendah} ({rata_terendah:.3f})")
-    print(f"Profit terbesar                    : {profit_tertinggi['id']} ({profit_tertinggi['profit']:,.2f}$) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
+    print(f"Profit terbesar                    : {profit_tertinggi['id']} (${profit_tertinggi['profit']:,.2f}) berada di peringkat efisiensi ke-{profit_tertinggi['peringkat']} dari {len(data)}")
 def identifikasi_user():
     print("\n" + "=" * 50)
     print("SELAMAT DATANG - ANALISIS EFISIENSI STARTUP")
