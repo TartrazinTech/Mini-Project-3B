@@ -9,6 +9,33 @@ batas_sedang = 0.26
 selisih_kecil = 10     
 selisih_besar = 40     
 selisih_porsi = 10
+print("="*65)
+print("                         MINI PROJECT")
+print("                     PEMROGRAMAN KOMPUTER")
+print("        (Analisis Efisiensi Pengeluaran dan Klasifikasi")
+print("        Tingkat Profitabilitas pada Perusahaan Startup)")
+print()
+print("                            Oleh:")
+print("                          Kelompok 3B")
+print()
+print("                          Anggota:")
+print("             Chayara Zulfa	       (2610932013)")
+print("             Muhammad Akhtar Abdillah  (2610932033)")
+print("             Asy Syakira Ananda Muslim (2610933011)")
+print("             Chelvin Cavi Camandano    (2610933015)")
+print()
+print("                    Asisten Pembimbing:")
+print("             Kurnia Rahmat Illahi & Hafzi Rizal")
+print()
+print("                       Dosen Pengampu:")
+print("               Dr. Eng. Ardhian Agung Yulianto")
+print()
+print("          LABORATORIUM SISTEM INFORMASI DAN KEPUTUSAN")
+print("                  DEPARTEMEN TEKNIK INDUSTRI")
+print("                       FAKULTAS TEKNIK")
+print("                     UNIVERSITAS ANDALAS")
+print("                            2026")
+print("="*65)
 def buka_file(file_csv, kolom_wajib):
     if not os.path.exists(file_csv):
         return "File tidak ditemukan"
@@ -296,7 +323,6 @@ def tampilkan_saran(data, data_urut):
         b_admin += p_admin
         b_marketing += p_marketing
     acuan = (b_rnd / len(acuan_data), b_admin / len(acuan_data), b_marketing / len(acuan_data))
-
     rata_total = 0
     rata_profit = 0
     for row in data:
